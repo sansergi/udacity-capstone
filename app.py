@@ -30,20 +30,21 @@ def create_app(test_config=None):
             client_id=AUTH0_CLIENT_ID,
             client_secret=AUTH0_CLIENT_SECRET,
             api_base_url=AUTH0_BASE_URL,
-            access_token_url='https://dev-1aweba2i.us.auth0.com' + '/oauth/token',
-            authorize_url='https://dev-1aweba2i.us.auth0.com' + '/authorize',
+            access_token_url='https://dev-1aweba2i.us.auth0.com' +
+                             '/oauth/token',
+            authorize_url='https://dev-1aweba2i.us.auth0.com' +
+                          '/authorize',
             client_kwargs={
                 'scope': 'openid profile email'
                     }
         )
 
-
     @app.after_request
     def after_request(response):
         response.headers.add('Access-Control-Allow-Headers',
-                            'Content-Type,Authorization,true')
+                             'Content-Type,Authorization,true')
         response.headers.add('Access-Control-Allow-Methods',
-                            'GET,PATCH,POST,DELETE,OPTIONS')
+                             'GET,PATCH,POST,DELETE,OPTIONS')
         return response
 
     @app.route('/login', methods=['GET'])
@@ -54,14 +55,12 @@ def create_app(test_config=None):
             audience=AUTH0_AUDIENCE
         )
 
-
     @app.route('/logout')
     def log_out():
         session.clear()
         params = {'returnTo': url_for('index', _external=True),
-                'client_id': AUTH0_CLIENT_ID}
+                  'client_id': AUTH0_CLIENT_ID}
         return redirect(AUTH0_BASE_URL + '/v2/logout?')
-
 
     @app.route('/post-login', methods=['GET'])
     @cross_origin()
@@ -70,11 +69,9 @@ def create_app(test_config=None):
         session['token'] = token['access_token']
         return render_template('pages/home.html')
 
-
     @app.route('/')
     def index():
         return render_template('pages/home.html')
-
 
     @app.route('/movies', methods=['GET'])
     @requires_auth('get:movies')
@@ -82,30 +79,29 @@ def create_app(test_config=None):
         movies = Movie.query.all()
         movies = [movie.format() for movie in movies]
         if movies is None:
-            return json.dumps({
-			'success': False,
-			'error': 'Resource not found'
-		    }), 404
+            return json.dumps(
+                {'success': False,
+                 'error': 'Resource not found'}
+                             ), 404
         return render_template('pages/movies.html',
-                            data=movies, roles=payload["permissions"],
-                            status_code=200)
-
+                               data=movies,
+                               roles=payload["permissions"],
+                               status_code=200)
 
     @app.route('/movies/<int:movie_id>', methods=['GET'])
     @requires_auth('get:movies')
     def get_movies_by_id(payload, movie_id):
         movie = Movie.query.get(movie_id)
         if movie is None:
-            return json.dumps({
-			'success': False,
-			'error': 'Resource not found'
-		    }), 404
+            return json.dumps(
+                {'success': False,
+                 'error': 'Resource not found'}
+                             ), 404
         movie = [movie.format()]
         query_actors = Actor.query.filter_by(movie_id=movie_id).all()
         return render_template('pages/show_movie.html', data=movie,
-                            actor_data=query_actors,
-                            roles=payload["permissions"])
-
+                               actor_data=query_actors,
+                               roles=payload["permissions"])
 
     @app.route('/actors', methods=['GET'])
     @requires_auth('get:actors')
@@ -113,28 +109,26 @@ def create_app(test_config=None):
         actors = Actor.query.all()
         actors = [actor.format() for actor in actors]
         if actors is None:
-            return json.dumps({
-			'success': False,
-			'error': 'Resource not found'
-		    }), 404
+            return json.dumps(
+                {'success': False,
+                 'error': 'Resource not found'}
+                             ), 404
         return render_template('pages/actors.html',
-                            data=actors, roles=payload["permissions"],
-                            status_code=200)
-
+                               data=actors, roles=payload["permissions"],
+                               status_code=200)
 
     @app.route('/actors/<int:actor_id>', methods=['GET'])
     @requires_auth('get:actors')
     def get_actors_by_id(payload, actor_id):
         actor = Actor.query.get(actor_id)
         if actor is None:
-            return json.dumps({
-			'success': False,
-			'error': 'Resource not found'
-		    }), 404
+            return json.dumps(
+                {'success': False,
+                 'error': 'Resource not found'}
+                             ), 404
         actor = [actor.format()]
         return render_template('pages/show_actor.html',
-                            roles=payload["permissions"], data=actor)
-
+                               roles=payload["permissions"], data=actor)
 
     @app.route('/actors/edit/<int:actor_id>', methods=['GET'])
     @requires_auth('get:actors')
@@ -142,14 +136,14 @@ def create_app(test_config=None):
         form = ActorForm()
         actor = Actor.query.get(actor_id)
         if actor is None:
-            return json.dumps({
-			'success': False,
-			'error': 'Resource not found'
-		    }), 404
+            return json.dumps(
+                {'success': False,
+                 'error': 'Resource not found'}
+                             ), 404
         actor = [actor.format()]
         return render_template('forms/edit_actor.html',
-                            roles=payload["permissions"], form=form, data=actor)
-
+                               roles=payload["permissions"],
+                               form=form, data=actor)
 
     @app.route('/actors/edit/<int:actor_id>', methods=['POST'])
     @requires_auth('patch:actors')
@@ -157,10 +151,10 @@ def create_app(test_config=None):
         error = False
         actor = Actor.query.get(actor_id)
         if actor is None:
-            return json.dumps({
-			'success': False,
-			'error': 'Resource not found'
-		    }), 404
+            return json.dumps(
+                {'success': False,
+                 'error': 'Resource not found'}
+                             ), 404
         try:
             actor.name = request.form['name']
             actor.gender = request.form['gender']
@@ -175,13 +169,13 @@ def create_app(test_config=None):
             db.session.close()
         if error:
             flash('An error occurred. Actor ' + request.form['name'] +
-                ' could not be updated.')
+                  ' could not be updated.')
         else:
             flash('Actor ' + request.form['name'] +
-                ' was successfully updated!')
+                  ' was successfully updated!')
         return redirect(url_for('get_actors',
-                                roles=payload["permissions"], actor_id=actor_id))
-
+                                roles=payload["permissions"],
+                                actor_id=actor_id))
 
     @app.route('/movies/edit/<int:movie_id>', methods=['GET'])
     @requires_auth('get:movies')
@@ -189,14 +183,14 @@ def create_app(test_config=None):
         form = MovieForm()
         movie = Movie.query.get(movie_id)
         if movie is None:
-            return json.dumps({
-			'success': False,
-			'error': 'Resource not found'
-		    }), 404
+            return json.dumps(
+                {'success': False,
+                 'error': 'Resource not found'}
+                             ), 404
         movie = [movie.format()]
         return render_template('forms/edit_movie.html',
-                            roles=payload["permissions"], form=form, data=movie)
-
+                               roles=payload["permissions"],
+                               form=form, data=movie)
 
     @app.route('/movies/edit/<int:movie_id>', methods=['POST'])
     @requires_auth('patch:movies')
@@ -204,10 +198,10 @@ def create_app(test_config=None):
         error = False
         movie = Movie.query.get(movie_id)
         if movie is None:
-            return json.dumps({
-			'success': False,
-			'error': 'Resource not found'
-		    }), 404
+            return json.dumps(
+                {'success': False,
+                 'error': 'Resource not found'}
+                             ), 404
         try:
             movie.title = request.form['title']
             movie.release_date = request.form['release_date']
@@ -220,21 +214,20 @@ def create_app(test_config=None):
             db.session.close()
         if error:
             flash('An error occurred. Movie ' + request.form['title'] +
-                ' could not be updated.')
+                  ' could not be updated.')
         else:
             flash('Movie ' + request.form['title'] +
-                ' was successfully updated!')
+                  ' was successfully updated!')
         return redirect(url_for('get_movies',
-                        roles=payload["permissions"], movie_id=movie_id))
-
+                        roles=payload["permissions"],
+                        movie_id=movie_id))
 
     @app.route('/movies/create', methods=['GET'])
     @requires_auth('post:movies')
     def create_movie_get(payload):
         form = MovieForm()
         return render_template('forms/new_movie.html',
-                            roles=payload["permissions"], form=form)
-
+                               roles=payload["permissions"], form=form)
 
     @app.route('/movies/create', methods=['POST'])
     @requires_auth('post:movies')
@@ -242,8 +235,8 @@ def create_app(test_config=None):
         error = False
         try:
             movie = Movie(title=request.form.get('title'),
-                        image_link=request.form.get('image_link'),
-                        release_date=request.form.get('release_date'))
+                          image_link=request.form.get('image_link'),
+                          release_date=request.form.get('release_date'))
             db.session.add(movie)
             db.session.commit()
         except Exception as ex:
@@ -253,20 +246,18 @@ def create_app(test_config=None):
             db.session.close()
         if error:
             flash('An error occurred. Movie ' + request.form['title'] +
-                ' could not be listed.')
+                  ' could not be listed.')
         else:
             flash('Movie ' + request.form['title'] +
-                ' was successfully listed!')
+                  ' was successfully listed!')
         return render_template('pages/home.html', roles=payload["permissions"])
-
 
     @app.route('/actors/create', methods=['GET'])
     @requires_auth('post:actors')
     def create_actor_get(payload):
         form = ActorForm()
         return render_template('forms/new_actor.html',
-                            form=form, roles=payload["permissions"])
-
+                               form=form, roles=payload["permissions"])
 
     @app.route('/actors/create', methods=['POST'])
     @requires_auth('post:actors')
@@ -274,10 +265,10 @@ def create_app(test_config=None):
         error = False
         try:
             actor = Actor(name=request.form.get('name'),
-                        age=request.form.get('age'),
-                        gender=request.form.get('gender'),
-                        picture_link=request.form.get('picture_link'),
-                        movie_id=request.form.get('movie_id'))
+                          age=request.form.get('age'),
+                          gender=request.form.get('gender'),
+                          picture_link=request.form.get('picture_link'),
+                          movie_id=request.form.get('movie_id'))
             db.session.add(actor)
             db.session.commit()
         except Exception as ex:
@@ -287,12 +278,11 @@ def create_app(test_config=None):
             db.session.close()
         if error:
             flash('An error occurred. Actor ' + request.form['name'] +
-                ' could not be listed.')
+                  ' could not be listed.')
         else:
             flash('Actor ' + request.form['name'] +
-                ' was successfully listed!')
+                  ' was successfully listed!')
         return render_template('pages/home.html', roles=payload["permissions"])
-
 
     @app.route('/movies/delete/<int:movie_id>')
     @requires_auth('delete:movies')
@@ -300,10 +290,10 @@ def create_app(test_config=None):
         error = False
         movie = Movie.query.filter(Movie.id == movie_id)
         if movie is None:
-            return json.dumps({
-			'success': False,
-			'error': 'Resource not found'
-		    }), 404
+            return json.dumps(
+                {'success': False,
+                 'error': 'Resource not found'}
+                             ), 404
         try:
             Movie.query.filter(Movie.id == movie_id).delete()
             db.session.commit()
@@ -315,11 +305,10 @@ def create_app(test_config=None):
             db.session.close()
         if error:
             flash('An error occurred. Movie ' + request.form['title'] +
-                ' could not be deleted.')
+                  ' could not be deleted.')
         else:
             flash('Movie deleted')
         return render_template('pages/home.html', roles=payload["permissions"])
-
 
     @app.route('/actors/delete/<int:actor_id>')
     @requires_auth('delete:actors')
@@ -327,10 +316,10 @@ def create_app(test_config=None):
         error = False
         actor = Actor.query.filter(Actor.id == actor_id)
         if actor is None:
-            return json.dumps({
-			'success': False,
-			'error': 'Resource not found'
-		    }), 404
+            return json.dumps(
+                {'success': False,
+                 'error': 'Resource not found'}
+                             ), 404
         try:
             Actor.query.filter(Actor.id == actor_id).delete()
             db.session.commit()
@@ -342,11 +331,10 @@ def create_app(test_config=None):
             db.session.close()
         if error:
             flash('An error occurred. Actor ' + request.form['name'] +
-                ' could not be deleted.')
+                  ' could not be deleted.')
         else:
             flash('Actor deleted')
         return render_template('pages/home.html', roles=payload["permissions"])
-
 
     @app.errorhandler(401)
     def unauthorized(error):
@@ -356,7 +344,6 @@ def create_app(test_config=None):
             "message": "Unauthorized"
             }), 401
 
-
     @app.errorhandler(422)
     def unprocessable(error):
         return jsonify({
@@ -364,7 +351,6 @@ def create_app(test_config=None):
             "error": 422,
             "message": "Task Unprocessable"
             }), 422
-
 
     @app.errorhandler(404)
     def unprocessable(error):
@@ -374,7 +360,6 @@ def create_app(test_config=None):
             "message": "Resource not found"
             }), 404
 
-
     @app.errorhandler(AuthError)
     def auth_error(error):
         return jsonify({
@@ -382,10 +367,12 @@ def create_app(test_config=None):
             "error": error.status_code,
             "message": error.error['description']
             }), error.status_code
-    
+
     return app
 
+
 app = create_app()
+
 
 if __name__ == '__main__':
     # app.run()
