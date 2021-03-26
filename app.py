@@ -46,6 +46,10 @@ def create_app(test_config=None):
                             'GET,PATCH,POST,DELETE,OPTIONS')
         return response
 
+    @app.route('/')
+    @cross_origin()
+    def index():
+	    return render_template('pages/home.html')
 
     @app.route('/login', methods=['GET'])
     @cross_origin()
