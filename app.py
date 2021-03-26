@@ -71,7 +71,7 @@ def create_app(test_config=None):
         return render_template('pages/home.html')
 
 
-    @app.route('/')
+    @app.route('/home')
     def index():
         return render_template('pages/home.html')
 
