@@ -57,7 +57,7 @@ class CastingAgencyTestCase(unittest.TestCase):
     def test_edit_movie_error(self):
         res = self.client.post('/movies/edit/11', 
                                headers=self.casting_assistant_header)
-        self.assertEqual(res.status_code, 404)
+        self.assertEqual(res.status_code, 401)
 
     def test_add_new_movie(self):
         res = self.client.post('/movies/create',
@@ -65,7 +65,7 @@ class CastingAgencyTestCase(unittest.TestCase):
                                               release_date="3/19/2021",
                                               image_link="https://test"),
                                     headers=self.casting_assistant_header)
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 401)
 
     def test_get_all_actors(self):
         res = self.client.get('/actors', 
@@ -80,7 +80,7 @@ class CastingAgencyTestCase(unittest.TestCase):
     def test_edit_actor_error(self):
         res = self.client.post('/actors/edit/11', 
                                headers=self.casting_assistant_header)
-        self.assertEqual(res.status_code, 404)
+        self.assertEqual(res.status_code, 401)
 
     def test_add_new_actor(self):
         response = self.client.post('/actors/create',
@@ -90,7 +90,7 @@ class CastingAgencyTestCase(unittest.TestCase):
                                               gender="male"),
                                     headers=self.casting_assistant_header
                                     )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 401)
 
 if __name__ == "__main__":
     unittest.main()

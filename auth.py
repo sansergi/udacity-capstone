@@ -6,9 +6,8 @@ from flask.globals import session
 from jose import jwt
 from urllib.request import urlopen
 
-# https://dev-1aweba2i.us.auth0.com/authorize?audience=Casting_Agency&response_type=token&client_id=s3bxEkaLBmL9Sln0AIOMfotoSAOUDXJY&redirect_uri=http://127.0.0.1:5000/home'
 AUTH0_DOMAIN = os.environ['AUTH0_DOMAIN']
-ALGORITHMS = ['RS256']
+ALGORITHMS = os.environ['ALGORITHMS']
 API_AUDIENCE = os.environ['AUTH0_AUDIENCE']
 
 
@@ -134,6 +133,7 @@ def requires_auth(permission=''):
                 # if check_permissions(permission, payload):
                 #     print('Permission is in permissions!')
                 #     print(str(session))
+                check_permissions(permission, payload)
                 return f(payload, *args, **kwargs)
             except Exception as e:
                 print(repr(e))
