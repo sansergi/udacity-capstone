@@ -1,0 +1,48 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Movie Page{% endblock %}
+{% block content %}
+{% for movie in data %}
+<div class="row">
+	<div class="col-sm-6">
+		<h1 class="monospace">
+			{{ movie.title }}
+		</h1>
+		<p class="subtitle">
+			ID: {{ movie.id }}
+		</p>
+		<p>
+			<i class="fas fa-map-marker"></i> Release Date: {{movie.release_date}}
+		</p>
+		<p> 
+			{% if 'patch:movies' in roles %}
+			<a href="/movies/edit/{{ movie.id }}"><button class="btn btn-primary btn-lg">Edit movie</button></a>
+			{% endif %}
+		</p>
+		<p> 
+			{% if 'delete:movies' in roles %}
+			<a href="/movies/delete/{{ movie.id }}"><button class="btn btn-danger btn-lg">Delete movie</button></a>
+			{% endif %}
+		</p>
+	</div>
+	<div class="col-sm-6">
+		<img src="{{ movie.image_link }}" alt="Movie Image" />
+	</div>
+</div>
+{% endfor %}
+<section>
+	<h2 class="monospace">Actors on this movie</h2>
+	<div class="row">
+		{%for actor in actor_data %}
+		<div class="col-sm-4">
+			<div class="tile tile-show">
+				<img src="{{ actor.picture_link }}" alt="Show Artist Image" />
+				<h5><a href="/actors/{{ actor.id }}">{{ actor.name }}</a></h5>
+			</div>			
+		</div>
+		{% endfor %}
+	</div>	
+</section>
+
+{% endblock %}
+
+

@@ -1,0 +1,32 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Actor Page{% endblock %}
+{% block content %}
+{% for actor in data %}
+<div class="row">
+	<div class="col-sm-6">
+		<h1 class="monospace">
+			{{ actor.name }}
+		</h1>
+		<p class="subtitle">
+			ID: {{ actor.id }}
+		</p>
+		<p>🚻 Gender: {{ actor.gender }}</p>
+        <p>🎂 Age: {{ actor.age }}</p>
+		<p> 
+			{% if 'patch:actors' in roles %}
+			<a href="/actors/edit/{{ actor.id }}"><button class="btn btn-primary btn-lg">Edit actor</button></a>
+			{% endif %}
+		</p>
+		<p> 
+			{% if 'delete:actors' in roles %}
+			<a href="/actors/delete/{{ actor.id }}"><button class="btn btn-danger btn-lg">Delete actor</button></a>
+			{% endif %}
+		</p>
+	</div>
+	<div class="col-sm-6">
+		<img src="{{ actor.picture_link }}" alt="Picture Image" />
+	</div>
+</div>
+{% endfor %}
+{% endblock %}
+

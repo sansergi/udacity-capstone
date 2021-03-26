@@ -1,0 +1,21 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Casting Agency | Movies{% endblock %}
+{% block content %}
+<ul class="items">
+	{% for movie in data %}
+	<li>
+		<a href="/movies/{{ movie.id }}">
+			<p>🎬</p>
+			<div class="item">
+				<h5>{{ movie.title }}</h5>
+			</div>
+		</a>
+	</li>
+	{% endfor %}
+</ul>
+<p>
+	{% if 'post:movies' in roles %}
+	<a href="/movies/create"><button class="btn btn-success btn-lg">Add new movie</button></a>
+	{% endif %}
+</p>
+{% endblock %}

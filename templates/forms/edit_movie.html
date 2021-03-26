@@ -1,0 +1,24 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Edit Movie{% endblock %}
+{% block content %}
+{% for movie in data %}
+  <div class="form-wrapper">
+    <form class="form" method="post" action="/movies/edit/{{movie.id}}">
+      <h3 class="form-heading">Edit movie <em>{{ movie.title }}</em></h3>
+      <div class="form-group">
+        <label for="name">Title</label>
+        {{ form.title(class_ = 'form-control', autofocus = true, value=movie['title']) }}
+      </div>
+      <div class="form-group">
+        <label for="release_date">Release Date</label>
+        {{ form.release_date(class_ = 'form-control', autofocus = true, value=movie['release_date']) }}
+      </div>
+      <div class="form-group">
+          <label for="image_link">Image Link</label>
+          {{ form.image_link(class_ = 'form-control', placeholder='http://', autofocus = true, value=movie['image_link']) }}
+        </div>
+      <input type="submit" value="Save Changes" class="btn btn-primary btn-lg btn-block">
+    </form>
+  </div>
+{% endfor %}
+{% endblock %}

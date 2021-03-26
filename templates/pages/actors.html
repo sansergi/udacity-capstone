@@ -1,0 +1,21 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Casting Agency | Artists{% endblock %}
+{% block content %}
+<ul class="items">
+	{% for actor in data %}
+	<li>
+		<a href="/actors/{{ actor.id }}">
+			<i class="fas fa-users"></i>
+			<div class="item">
+				<h5>{{ actor.name }}</h5>
+			</div>
+		</a>
+	</li>
+	{% endfor %}
+</ul>
+<p>
+	{% if 'post:actors' in roles %}
+	<a href="/actors/create"><button class="btn btn-success btn-lg">Add new actor</button></a>
+	{% endif %}
+</p>
+{% endblock %}
