@@ -53,7 +53,7 @@ def check_permissions(permission, payload):
 
     if permission not in payload['permissions']:
         print(f'{permission} not in {payload["permissions"]}')
-        raise AuthError({
+        return AuthError({
             'success': False,
             'message': 'Permission not found in JWT',
             'error': 401
@@ -119,20 +119,15 @@ def requires_auth(permission=''):
         def wrapper(*args, **kwargs):
             try:
                 token = None
-                # if session['token']:
-                #     token = session['token']
                 if 'token' in session:
                     token = session['token']
                 else:
                     token = get_token_auth_header()
-                # print('token at authorization time: {}'.format(token))
+                # print('token: {}'.format(token))
                 if token is None:
                     abort(400)
                 payload = verify_decode_jwt(token)
-                # print(f'testing for permission: {permission}')
-                # if check_permissions(permission, payload):
-                #     print('Permission is in permissions!')
-                #     print(str(session))
+                # print(str(session))
                 check_permissions(permission, payload)
                 return f(payload, *args, **kwargs)
             except Exception as e:

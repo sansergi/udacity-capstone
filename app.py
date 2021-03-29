@@ -342,7 +342,7 @@ def create_app(test_config=None):
             "success": False,
             "error": 401,
             "message": "Unauthorized"
-            }), 401
+            }, 401)
 
     @app.errorhandler(422)
     def unprocessable(error):
@@ -350,7 +350,7 @@ def create_app(test_config=None):
             "success": False,
             "error": 422,
             "message": "Task Unprocessable"
-            }), 422
+            }, 422)
 
     @app.errorhandler(404)
     def unprocessable(error):
@@ -358,7 +358,7 @@ def create_app(test_config=None):
             "success": False,
             "error": 404,
             "message": "Resource not found"
-            }), 404
+            }, 404)
 
     @app.errorhandler(AuthError)
     def auth_error(error):
@@ -366,8 +366,7 @@ def create_app(test_config=None):
             "success": False,
             "error": error.status_code,
             "message": error.error['description']
-            }), error.status_code
-
+            }, error.status_code)
     return app
 
 
